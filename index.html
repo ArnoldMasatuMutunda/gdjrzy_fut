@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>gD.jrzy — Football Lives Here. | Garment District</title>
+  <meta name="description" content="gD.jrzy is the football jersey department of Garment District. Shop curated club, national and retro archive kits as everyday streetwear. Wear the game your way.">
+  <link rel="icon" type="image/svg+xml" href="assets/brand/logo-badge.svg">
+  <link rel="stylesheet" href="css/store.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;0,900;1,400;1,700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Top Announcement Bar -->
+  <aside class="topbar" aria-label="Announcement & Currency Bar">
+    <div class="topbar-left">
+      <span>GARMENT DISTRICT · DEPT: gD.jrzy</span>
+      <span>·</span>
+      <span>FOOTBALL LIVES HERE</span>
+    </div>
+    <div class="topbar-right">
+      <span>MARKET:</span>
+      <div class="currency-picker" role="radiogroup" aria-label="Select Currency">
+        <button class="currency-btn active" data-currency="INR" onclick="setCurrency('INR')">₹ INR</button>
+        <button class="currency-btn" data-currency="TZS" onclick="setCurrency('TZS')">TSh TZS</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Sticky Main Navigation -->
+  <header>
+    <nav class="nav" aria-label="Main Navigation">
+      <div class="nav-brand">
+        <a href="#top" aria-label="gD.jrzy Homepage">
+          <img src="assets/brand/logo-primary.svg" alt="gD.jrzy Logo" class="logo-img" onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='block';">
+          <div id="logoFallback" class="logo-fallback" style="display:none;">
+            gD.<small>JRZY / FOOTBALL LIVES HERE.</small>
+          </div>
+        </a>
+      </div>
+
+      <div class="nav-links">
+        <a href="#shop">Shop Jerseys</a>
+        <a href="#campaign">Fit The Kit</a>
+        <a href="#story">Our Culture</a>
+        <a href="#droplist">The Drop List</a>
+      </div>
+
+      <div class="nav-actions">
+        <button class="icon-btn" onclick="document.getElementById('shopSearch').focus(); document.getElementById('shop').scrollIntoView();" title="Search catalog" aria-label="Search catalog">⌕</button>
+        <button class="pill" onclick="toggleCart(true)" aria-label="View Shopping Bag">
+          Bag <span id="navCartCount" class="bag-count">0</span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <main>
+    <section class="hero" id="top">
+      <div class="hero-copy">
+        <div class="hero-tagline">Season Archive · Drop 001</div>
+        <h1>FOOTBALL<br><span>lives here.</span></h1>
+        <p>From the stadium stands to the night city streets. Authentic culture, archive classics, and contemporary club shirts styled your way. Wear the game as everyday streetwear.</p>
+        <div class="hero-cta-group">
+          <a class="pill dark" href="#shop">Explore Collection ↗</a>
+          <a class="pill" href="#campaign">Style Notes / FIT THE KIT</a>
+        </div>
+      </div>
+      <div class="hero-visual" id="heroArt" aria-label="Featured Jersey Carousel">
+        <!-- Injected dynamically by store.js with real photography -->
+      </div>
+    </section>
+
+    <!-- Moving Football Culture Ticker -->
+    <div class="ticker" aria-hidden="true">
+      <div class="ticker-track">
+        <span>FOOTBALL LIVES HERE.</span><span class="ticker-bullet">/</span>
+        <span>THE CULTURE IS THE KIT.</span><span class="ticker-bullet">/</span>
+        <span>WEAR THE GAME YOUR WAY.</span><span class="ticker-bullet">/</span>
+        <span>gD.jrzy ARCHIVE</span><span class="ticker-bullet">/</span>
+        <span>FIT THE KIT.</span><span class="ticker-bullet">/</span>
+        <span>FOOTBALL LIVES HERE.</span><span class="ticker-bullet">/</span>
+        <span>THE CULTURE IS THE KIT.</span><span class="ticker-bullet">/</span>
+        <span>WEAR THE GAME YOUR WAY.</span><span class="ticker-bullet">/</span>
+        <span>gD.jrzy ARCHIVE</span><span class="ticker-bullet">/</span>
+        <span>FIT THE KIT.</span><span class="ticker-bullet">/</span>
+      </div>
+    </div>
+
+    <!-- Collection Section -->
+    <section id="shop">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">The Collection / 001</div>
+          <h2>Pick your side.</h2>
+        </div>
+        <p>Current season statements. Legendary retro vault editions. Your club, your colours, your identity.</p>
+      </div>
+
+      <!-- Filters & Search Toolbar -->
+      <div class="catalog-toolbar">
+        <div class="filters-group" id="filters">
+          <button class="filter-btn active" data-filter="All" onclick="setFilter('All')">All Kits</button>
+          <button class="filter-btn" data-filter="Club" onclick="setFilter('Club')">Club Kits</button>
+          <button class="filter-btn" data-filter="National" onclick="setFilter('National')">National Teams</button>
+          <button class="filter-btn" data-filter="Classic" onclick="setFilter('Classic')">Classics & Retro</button>
+        </div>
+
+        <div class="search-box">
+          <span style="font-size: 1rem; color: #888;">⌕</span>
+          <input type="text" id="shopSearch" placeholder="Search by team, club or kit..." oninput="handleSearch(this.value)">
+        </div>
+      </div>
+
+      <!-- Live Dynamic Products Grid -->
+      <div class="products-grid" id="productsGrid">
+        
+      </div>
+    </section>
+
+    <!-- FIT THE KIT Campaign -->
+    <section class="campaign" id="campaign">
+      <div class="campaign-copy">
+        <div class="eyebrow">Creative Direction / 001</div>
+        <h2>FIT<br>THE KIT.</h2>
+        <p>A football jersey is more than ninety minutes on a pitch. It’s campus morning coffee, night sessions in the city, airports, and casual dinners. Styled with tailored denim, oversized coats, or track pants — wear the shirt as part of your everyday silhouette.</p>
+        <a href="#shop" class="pill orange">Find Your Fit ↗</a>
+      </div>
+      <div class="campaign-visual">
+        <img class="campaign-img" src="assets/brand/campaign-fit-the-kit.jpg" alt="FIT THE KIT campaign jersey styling" style="border-radius: 4px;">
+      </div>
+    </section>
+
+    <!-- Manifesto & Brand Story -->
+    <section id="story" class="manifesto">
+      <div>
+        <div class="eyebrow">Department Philosophy</div>
+        <h2>Made for the ones who live it.</h2>
+        <p>gD.jrzy is the curated football jersey department of <b>Garment District</b>. We were founded on a simple truth: football culture belongs everywhere — on campus, on the streets, in travels, and in clubs.</p>
+        <p>We source authentic-grade replicas, rare retro treasures, and modern iconic kits for enthusiasts in Tanzania, India, and across the globe. Honest pricing, real photography, and zero fake hype.</p>
+        <a href="#shop" class="pill dark">Explore Current Drop ↗</a>
+      </div>
+      <div class="manifesto-visual">
+        <img class="manifesto-img" src="assets/brand/manifesto-culture.jpg" alt="gD.jrzy boutique archive vault">
+      </div>
+    </section>
+
+    <!-- The Drop List (Newsletter) -->
+    <section class="drop-list" id="droplist">
+      <div class="eyebrow">The gD.jrzy Drop List</div>
+      <h2>First to the drop.</h2>
+      <p>Subscribe to receive archive alerts, restock announcements, and limited kit drops directly in your inbox. No spam, only football culture.</p>
+      <form class="drop-list-form" onsubmit="handleNewsletter(event)">
+        <input type="email" placeholder="Enter your email address" required>
+        <button class="pill dark" type="submit">Join Drop List ↗</button>
+      </form>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="serif" style="font-size: 2.2rem; font-weight: 900; letter-spacing: -0.06em;">gD.</div>
+        <p><b>gD.jrzy</b> is the football jersey department of Garment District. Football jerseys as fashion, culture, and streetwear.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="#shop">Shop All Kits</a></li>
+          <li><a href="#campaign">FIT THE KIT</a></li>
+          <li><a href="#story">Our Culture</a></li>
+          <li><a href="#droplist">Drop List</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Markets</h4>
+        <ul>
+          <li>Tanzania (Dar es Salaam)</li>
+          <li>India (Mumbai & Pan-India)</li>
+          <li>WhatsApp Direct Orders</li>
+          <li>Worldwide Shipping</li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <ul>
+          <li>Instagram: <a href="https://instagram.com/gd.jrzy" target="_blank" rel="noopener">@gd.jrzy</a></li>
+          <li>WhatsApp: <a href="https://wa.me/255686513559" target="_blank" rel="noopener">+255 686 513 559</a> | <a href="https://wa.me/918360632384" target="_blank" rel="noopener">+91 8360 632 384</a></li>
+          <li>Tagline: Football Lives Here.</li>
+          <li>Campaign: FIT THE KIT.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div>© 2026 Garment District · gD.jrzy Department. All Rights Reserved.</div>
+      <div>
+        <a href="#top">Back to Top ↑</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Product Detail & Quick-View Modal -->
+  <div class="modal-backdrop" id="productModalBackdrop" onclick="if(event.target===this)closeProductModal()">
+    <div class="product-modal">
+      <button class="modal-close-btn" onclick="closeProductModal()" aria-label="Close modal">✕</button>
+      
+      <div class="modal-gallery-pane">
+        <img id="modalMainImg" class="modal-main-image" src="" alt="Jersey Photo">
+        <div class="modal-thumbnails" id="modalThumbnails">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <div class="modal-info-pane">
+        <div>
+          <div class="modal-lot" id="modalLot">GDJ-JRZY-001 · Club / gD.jrzy</div>
+          <h2 class="modal-title" id="modalTitle">Jersey Title</h2>
+          <div class="modal-price-row">
+            <span class="modal-price" id="modalPrice">₹1,899</span>
+            <span class="modal-condition" id="modalCondition">Brand New with Tags</span>
+          </div>
+          <p class="modal-desc" id="modalDesc"></p>
+
+          <div style="font-size: 0.75rem; color: #777; margin-bottom: 16px;">
+            <b>Fabric & Details:</b> <span id="modalFabric"></span>
+          </div>
+
+          <div class="size-selector-label">
+            <span>Select Size</span>
+            <span style="font-weight: 400; color: #777;">Standard Athletic Fit</span>
+          </div>
+
+          <div class="size-options">
+            <button class="size-btn" data-size="S">S</button>
+            <button class="size-btn active" data-size="M">M</button>
+            <button class="size-btn" data-size="L">L</button>
+            <button class="size-btn" data-size="XL">XL</button>
+          </div>
+
+          <div class="stock-indicator" id="modalStockIndicator">Checking size availability...</div>
+        </div>
+
+        <div class="modal-actions">
+          <button class="pill dark" id="modalAddCartBtn" onclick="addToCartFromModal()" style="width: 100%; padding: 14px;">
+            Add to Bag ↗
+          </button>
+          <a class="whatsapp-inquire-btn" id="modalWhatsAppBtn" target="_blank" rel="noopener">
+            <span>💬 Inquire on WhatsApp</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shopping Bag Drawer -->
+  <div class="modal-backdrop" id="cartBackdrop" onclick="toggleCart(false)" style="background: rgba(0,0,0,0.5);"></div>
+  <aside class="cart-drawer" id="cartDrawer" aria-label="Shopping Bag">
+    <div class="cart-header">
+      <h2>Your Bag (<span id="drawerCartCount">0</span>)</h2>
+      <button class="modal-close-btn" onclick="toggleCart(false)" aria-label="Close bag">✕</button>
+    </div>
+
+    <div class="cart-items-scroll" id="cartItemsList">
+      <!-- Populated dynamically by store.js -->
+    </div>
+
+    <div class="cart-footer">
+      <div class="cart-subtotal-row">
+        <span>Subtotal</span>
+        <span id="cartSubtotal">₹0</span>
+      </div>
+      <button class="pill dark" style="width: 100%; padding: 14px;" onclick="openCheckoutModal()">
+        Proceed to Checkout ↗
+      </button>
+      <p style="font-size: 0.6875rem; color: #777; text-align: center; margin-top: 10px;">
+        Local taxes & standard domestic shipping calculated at confirmation.
+      </p>
+    </div>
+  </aside>
+
+  <!-- Interactive Checkout Modal -->
+  <div class="modal-backdrop" id="checkoutModalBackdrop" onclick="if(event.target===this)closeCheckoutModal()">
+    <div class="checkout-modal">
+      <button class="modal-close-btn" onclick="closeCheckoutModal()" aria-label="Close checkout">✕</button>
+      <h2>Checkout Details</h2>
+      <p style="font-size: 0.8125rem; color: #666;">
+        Order Total: <b id="checkoutSummaryTotal" style="color: var(--black);">₹0</b> (<span id="checkoutSummaryCount">0 Items</span>)
+      </p>
+
+      <form class="checkout-form" onsubmit="handleCheckoutSubmit(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="custName">Full Name *</label>
+            <input type="text" id="custName" required placeholder="e.g. John Doe">
+          </div>
+          <div class="form-group">
+            <label for="custPhone">Phone / WhatsApp Number *</label>
+            <input type="tel" id="custPhone" required placeholder="+255 7... or +91 9...">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="custEmail">Email Address (Optional)</label>
+          <input type="email" id="custEmail" placeholder="your@email.com">
+        </div>
+
+        <div class="form-group">
+          <label for="custAddress">Delivery Address *</label>
+          <input type="text" id="custAddress" required placeholder="Street address, house / apartment number">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="custCity">City / Town *</label>
+            <input type="text" id="custCity" required placeholder="e.g. Dar es Salaam or Mumbai">
+          </div>
+          <div class="form-group">
+            <label for="custCountry">Country / Region *</label>
+            <select id="custCountry" required>
+              <option value="India">India (Razorpay / UPI / COD)</option>
+              <option value="Tanzania">Tanzania (Mobile Money / Selcom / COD)</option>
+              <option value="International">International</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Select Payment Option</label>
+          <input type="hidden" id="selectedPaymentMethodInput" value="WhatsApp">
+          <div class="payment-options-grid">
+            <div class="payment-option-card selected" onclick="selectPaymentMethod('WhatsApp', this)">
+              <b>WhatsApp Direct Order</b>
+              <small>Confirm details & pay directly with merchant</small>
+            </div>
+            <div class="payment-option-card" onclick="selectPaymentMethod('OnlineGateway', this)">
+              <b>Online Payment Gateway</b>
+              <small>Razorpay / Mobile Money Card Gateway</small>
+            </div>
+            <div class="payment-option-card" onclick="selectPaymentMethod('COD', this)">
+              <b>Cash on Delivery</b>
+              <small>Pay upon package receipt (eligible cities)</small>
+            </div>
+            <div class="payment-option-card" onclick="selectPaymentMethod('MobileMoney', this)">
+              <b>Tanzania Mobile Money</b>
+              <small>M-Pesa / Tigo Pesa / Airtel Money</small>
+            </div>
+          </div>
+        </div>
+
+        <button class="pill dark" type="submit" style="width: 100%; padding: 15px; margin-top: 10px;">
+          Confirm Order & Complete ↗
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Order Success Modal -->
+  <div class="modal-backdrop" id="orderSuccessModalBackdrop">
+    <div class="checkout-modal" style="text-align: center; max-width: 480px;">
+      <div style="font-size: 3rem; margin-bottom: 8px;">✓</div>
+      <h2 style="font-size: 1.8rem; margin-bottom: 6px;">Order Confirmed!</h2>
+      <p style="font-size: 0.875rem; color: #666; margin-bottom: 18px;">
+        Thank you for styling your kit with gD.jrzy. Your order has been registered in our database.
+      </p>
+
+      <div style="background: var(--bone-card); padding: 16px; border-radius: 4px; margin-bottom: 24px; text-align: left;">
+        <div style="font-size: 0.75rem; color: #777;">Order Reference:</div>
+        <div id="successOrderId" style="font-size: 1.2rem; font-weight: 800; color: var(--black); margin-bottom: 8px;">ORD-00000</div>
+        <div style="font-size: 0.75rem; color: #777;">Authoritative Total:</div>
+        <div id="successOrderTotal" style="font-size: 1.1rem; font-weight: 800; color: var(--orange);">₹0</div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <a id="successWhatsAppBtn" class="whatsapp-inquire-btn" target="_blank" rel="noopener">
+          <span>💬 Send Order Receipt to WhatsApp</span>
+        </a>
+        <button class="pill" onclick="closeOrderSuccessModal()" style="width: 100%;">
+          Continue Exploring Kits
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast" class="toast"></div>
+
+  <!-- Scripts -->
+  <script src="js/db.js"></script>
+  <script src="js/store.js"></script>
+</body>
+</html>

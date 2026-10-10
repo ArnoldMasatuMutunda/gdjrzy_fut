@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+.npm/
+
+# Environment Variables & Secrets
+.env
+.env.local
+.env.*.local
+
+# Operating System
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# C++ Build Artefacts from StockManagementSystem
+StockManagementSystem/*.exe
+StockManagementSystem/*.o
+StockManagementSystem/*.db
+
+# IDE & Editor files
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*

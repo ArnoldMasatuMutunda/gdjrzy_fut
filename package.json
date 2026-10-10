@@ -1,0 +1,20 @@
+{
+  "name": "gd-jrzy-store",
+  "version": "1.0.0",
+  "description": "gD.jrzy — Football Lives Here. Official e-commerce website & standalone Control Room for Garment District.",
+  "main": "index.html",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "gd-jrzy",
+    "football",
+    "jerseys",
+    "streetwear",
+    "ecommerce",
+    "garment-district"
+  ],
+  "author": "Garment District · gD.jrzy Department",
+  "license": "MIT"
+}

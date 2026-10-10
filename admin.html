@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>gD.jrzy — Control Room & QuickDrop Admin</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/svg+xml" href="assets/brand/logo-badge.svg">
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;0,900;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Protected Authentication Gate (shown when logged out) -->
+  <div class="auth-gate-wrap" id="authGateWrap">
+    <div class="auth-gate-card">
+      <div class="auth-gate-logo">
+        gD.<small>JRZY / CONTROL ROOM</small>
+      </div>
+      <h1>Private Access</h1>
+      <p>Staff authentication required to administer the gD.jrzy catalog, manage stock, and process customer drop orders.</p>
+
+      <form class="auth-form" onsubmit="handleAdminLogin(event)">
+        <label for="adminPasswordInput">Admin Password</label>
+        <input type="password" id="adminPasswordInput" placeholder="Enter admin password" required autocomplete="current-password">
+        <div id="authErrorMsg" class="auth-error-msg"></div>
+        <button class="admin-btn orange" type="submit" style="padding: 14px;">
+          Unlock Control Room ↗
+        </button>
+      </form>
+
+      <div style="margin-top: 24px; text-align: center;">
+        <a href="index.html" style="font-size: 0.75rem; color: var(--admin-muted); text-decoration: underline;">
+          ← Return to Public Storefront
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Main Portal (shown when authenticated) -->
+  <div class="admin-layout" id="adminLayout" style="display: none;">
+    
+    <!-- Top Bar -->
+    <header class="admin-topbar">
+      <div class="admin-brand">
+        <a href="index.html" target="_blank" class="admin-logo-text" title="View Store">
+          gD.jrzy <span class="admin-tag">Control Room</span>
+        </a>
+      </div>
+
+      <div class="admin-nav-actions">
+        <a href="index.html" target="_blank" class="admin-btn outline sm">
+          View Live Storefront ↗
+        </a>
+        <button class="admin-btn outline sm" onclick="handleAdminLogout()">
+          Log Out
+        </button>
+      </div>
+    </header>
+
+    <!-- Quick Stats Bar -->
+    <section class="admin-stats-bar" aria-label="Catalog Overview Statistics">
+      <div class="stat-chip">
+        <span class="stat-label">Total Jerseys</span>
+        <span class="stat-value" id="statTotalJerseys">0</span>
+      </div>
+      <div class="stat-chip accent">
+        <span class="stat-label">Live in Store</span>
+        <span class="stat-value" id="statLive">0</span>
+      </div>
+      <div class="stat-chip">
+        <span class="stat-label">Drafts</span>
+        <span class="stat-value" id="statDrafts">0</span>
+      </div>
+      <div class="stat-chip">
+        <span class="stat-label">Customer Orders</span>
+        <span class="stat-value" id="statOrders">0</span>
+      </div>
+      <div class="stat-chip">
+        <span class="stat-label">Out of Stock</span>
+        <span class="stat-value" id="statOutOfStock">0</span>
+      </div>
+    </section>
+
+    <!-- Navigation Tabs -->
+    <nav class="admin-tabs" aria-label="Admin Navigation Tabs">
+      <button class="admin-tab-btn active" data-tab="quickdrop" onclick="loadTab('quickdrop')">
+        + QuickDrop (New Jersey)
+      </button>
+      <button class="admin-tab-btn" data-tab="inventory" onclick="loadTab('inventory')">
+        Inventory & Catalog Desk
+      </button>
+      <button class="admin-tab-btn" data-tab="orders" onclick="loadTab('orders')">
+        Orders Desk & WhatsApp
+      </button>
+      <button class="admin-tab-btn" data-tab="settings" onclick="loadTab('settings')">
+        Store & Gateways Settings
+      </button>
+    </nav>
+
+    <!-- Main Workspace -->
+    <main class="admin-content">
+
+      <!-- TAB 1: QuickDrop (+ New Jersey) -->
+      <div class="tab-pane active" id="tab-quickdrop">
+        <div class="quickdrop-grid">
+          
+          <!-- Form Pane -->
+          <div class="admin-card">
+            <div class="admin-card-head">
+              <div>
+                <h2>QuickDrop — Physical Jersey Intake</h2>
+                <p>Upload real product photography, configure sizes and prices, and publish directly to the live website without writing code.</p>
+              </div>
+              <button class="admin-btn outline sm" type="button" onclick="resetQuickDropForm()">
+                Reset Form
+              </button>
+            </div>
+
+            <form id="quickDropForm" onsubmit="handleQuickDropSubmit(event)">
+              
+              <!-- 1. Real Photography Upload Section -->
+              <div class="form-section">
+                <div class="form-section-title">01 / Real Product Photography</div>
+                <p style="font-size: 0.75rem; color: var(--admin-muted); margin-bottom: 12px;">
+                  Upload actual high-res photos of the jersey (Front, Back, Tags, Details). Do not use AI generated mockups or SVG placeholders.
+                </p>
+
+                <div class="upload-dropzone" id="photoDropzone">
+                  <div class="upload-dropzone-icon">📷</div>
+                  <p>Drag & drop jersey photos here, or click to browse</p>
+                  <small>Supports JPG, PNG, WebP · First uploaded photo becomes primary card cover</small>
+                  <input type="file" id="photoFileInput" multiple accept="image/*" style="display: none;">
+                </div>
+
+                <div class="upload-gallery-previews" id="uploadGalleryPreviews">
+                  <!-- Injected dynamically with uploaded photo thumbnails -->
+                </div>
+              </div>
+
+              <!-- 2. Product Identity Section -->
+              <div class="form-section">
+                <div class="form-section-title">02 / Identity & Metadata</div>
+
+                <div class="admin-form-row">
+                  <div class="admin-form-group">
+                    <label for="qdName">Jersey Title *</label>
+                    <input type="text" id="qdName" required placeholder="e.g. Brazil Away / Seleção 2024">
+                  </div>
+                  <div class="admin-form-group">
+                    <label for="qdTeam">Club or Country *</label>
+                    <input type="text" id="qdTeam" required placeholder="e.g. Brazil or Real Madrid">
+                  </div>
+                </div>
+
+                <div class="admin-form-row-3">
+                  <div class="admin-form-group">
+                    <label for="qdCategory">Category *</label>
+                    <select id="qdCategory" required>
+                      <option value="Club">Club Kit</option>
+                      <option value="National">National Team</option>
+                      <option value="Classic">Classic & Retro</option>
+                    </select>
+                  </div>
+                  <div class="admin-form-group">
+                    <label for="qdKitType">Kit Edition *</label>
+                    <select id="qdKitType" required>
+                      <option value="Home">Home</option>
+                      <option value="Away">Away</option>
+                      <option value="Third">Third</option>
+                      <option value="Retro">Retro Vault</option>
+                      <option value="Archive">Archive Find</option>
+                    </select>
+                  </div>
+                  <div class="admin-form-group">
+                    <label for="qdSeason">Season / Year</label>
+                    <input type="text" id="qdSeason" placeholder="e.g. 2024/25 or 1998">
+                  </div>
+                </div>
+
+                <div class="admin-form-row">
+                  <div class="admin-form-group">
+                    <label for="qdCondition">Physical Condition *</label>
+                    <select id="qdCondition" required>
+                      <option value="Brand New with Tags">Brand New with Tags</option>
+                      <option value="Mint / Like New">Mint / Like New</option>
+                      <option value="Excellent Vintage">Excellent Vintage</option>
+                      <option value="Good Retro">Good Retro</option>
+                    </select>
+                  </div>
+                  <div class="admin-form-group">
+                    <label for="qdLotNumber">Lot Number (Locked Format) *</label>
+                    <input type="text" id="qdLotNumber" required placeholder="GDJ-JRZY-001">
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3. Pricing & Multi-Market -->
+              <div class="form-section">
+                <div class="form-section-title">03 / Multi-Market Pricing</div>
+
+                <div class="admin-form-row">
+                  <div class="admin-form-group">
+                    <label for="qdPriceINR">Price in India (INR ₹) *</label>
+                    <input type="number" id="qdPriceINR" min="1" required placeholder="1899" oninput="autoCalcTZS()">
+                  </div>
+                  <div class="admin-form-group">
+                    <label for="qdPriceTZS">Price in Tanzania (TZS TSh) *</label>
+                    <div style="display: flex; gap: 6px;">
+                      <input type="number" id="qdPriceTZS" min="1" placeholder="58000" style="flex:1;">
+                      <button class="admin-btn outline sm" type="button" onclick="autoCalcTZS()" title="Calculate from INR @ 31x">Auto</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 4. Size-Specific Inventory -->
+              <div class="form-section">
+                <div class="form-section-title">04 / Size-Specific Inventory (Units)</div>
+                <div class="admin-form-row">
+                  <div class="admin-form-group">
+                    <label for="qdStockS">Size S Stock</label>
+                    <input type="number" id="qdStockS" min="0" value="2">
+                  </div>
+                  <div class="admin-form-group">
+                    <label for="qdStockM">Size M Stock</label>
+                    <input type="number" id="qdStockM" min="0" value="4">
+                  </div>
+                </div>
+                <div class="admin-form-row">
+                  <div class="admin-form-group">
+                    <label for="qdStockL">Size L Stock</label>
+                    <input type="number" id="qdStockL" min="0" value="4">
+                  </div>
+                  <div class="admin-form-group">
+                    <label for="qdStockXL">Size XL Stock</label>
+                    <input type="number" id="qdStockXL" min="0" value="2">
+                  </div>
+                </div>
+              </div>
+
+              <!-- 5. Editorial & Publishing -->
+              <div class="form-section" style="border-bottom: none;">
+                <div class="form-section-title">05 / Editorial Details & Status</div>
+
+                <div class="admin-form-row">
+                  <div class="admin-form-group">
+                    <label for="qdTag">Badge Tag</label>
+                    <input type="text" id="qdTag" placeholder="e.g. Fan Favourite, New Drop, Retro Vault">
+                  </div>
+                  <div class="admin-form-group">
+                    <label for="qdStatus">Publishing Status *</label>
+                    <select id="qdStatus" required>
+                      <option value="Published">Published (Instantly Live in Store)</option>
+                      <option value="Draft">Draft (Internal Only)</option>
+                      <option value="Sold">Sold (Marked Out of Stock)</option>
+                      <option value="Archived">Archived (Hidden from Catalog)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="admin-form-group">
+                  <label for="qdDesc">Editorial Product Description</label>
+                  <textarea id="qdDesc" rows="3" placeholder="Describe the jersey fit, styling notes, and history..."></textarea>
+                </div>
+
+                <div class="admin-form-group">
+                  <label for="qdFabric">Fabric & Technical Care</label>
+                  <input type="text" id="qdFabric" placeholder="e.g. 100% Recycled Poly Jacquard / Cold wash inside out">
+                </div>
+              </div>
+
+              <button class="admin-btn orange" id="qdSubmitBtn" type="submit" style="width: 100%; padding: 16px; font-size: 0.875rem;">
+                Publish Jersey to Store ↗
+              </button>
+            </form>
+          </div>
+
+          <!-- Live Preview Pane -->
+          <div>
+            <div class="quickdrop-preview-pane">
+              <div class="preview-pane-header">
+                <span>Live Card Preview</span>
+                <span id="previewLot">GDJ-JRZY-001</span>
+              </div>
+
+              <div class="preview-mock-card">
+                <div class="preview-img-box">
+                  <img id="previewImg" src="assets/jerseys/brazil-t90-blue.webp" alt="Preview Image">
+                </div>
+                <div>
+                  <div id="previewMeta" style="font-size: 0.6875rem; color: var(--admin-muted); text-transform: uppercase;">Club / gD.jrzy</div>
+                  <h3 id="previewTitle" style="font-size: 1.1rem; font-weight: 800; margin: 4px 0;">Jersey Product Name</h3>
+                  <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 8px;">
+                    <span id="previewPrice" style="font-size: 1.1rem; font-weight: 800; color: var(--orange);">₹1,999</span>
+                    <span id="previewCondition" style="font-size: 0.625rem; background: #333; padding: 2px 6px; border-radius: 2px; text-transform: uppercase;">Brand New</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style="margin-top: 24px; padding: 14px; background: #191916; border-radius: 4px; border: 1px solid var(--admin-border);">
+                <div style="font-size: 0.6875rem; color: var(--orange); font-weight: 700; text-transform: uppercase; margin-bottom: 4px;">QuickDrop Sync Protocol</div>
+                <p style="font-size: 0.75rem; color: var(--admin-muted); line-height: 1.5;">
+                  Upon clicking <b>Publish</b>, images and stock records are committed to the commerce database. The customer storefront updates live via cross-tab synchronization.
+                </p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- TAB 2: Inventory & Catalog Desk -->
+      <div class="tab-pane" id="tab-inventory">
+        <div class="admin-card">
+          <div class="admin-card-head">
+            <div>
+              <h2>Inventory & Catalog Desk</h2>
+              <p>Manage all active club, national, and retro kits. Adjust stock per size, update pricing, or edit descriptions.</p>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button class="admin-btn outline sm" onclick="exportCatalogJSON()">Export Catalog JSON ↓</button>
+              <label class="admin-btn outline sm" style="cursor: pointer;">
+                Import JSON ↑
+                <input type="file" accept=".json" style="display: none;" onchange="importCatalogJSON(event)">
+              </label>
+              <button class="admin-btn orange sm" onclick="loadTab('quickdrop')">+ New Jersey</button>
+            </div>
+          </div>
+
+          <!-- Toolbar -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 14px; flex-wrap: wrap;">
+            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+              <button class="admin-btn outline sm inv-filter-btn active" data-status="All" onclick="filterInventory('All')">All</button>
+              <button class="admin-btn outline sm inv-filter-btn" data-status="Published" onclick="filterInventory('Published')">Published</button>
+              <button class="admin-btn outline sm inv-filter-btn" data-status="Draft" onclick="filterInventory('Draft')">Drafts</button>
+              <button class="admin-btn outline sm inv-filter-btn" data-status="LowStock" onclick="filterInventory('LowStock')">Low Stock</button>
+            </div>
+
+            <div style="width: min(100%, 280px);">
+              <input type="text" placeholder="Search by name, team, or lot..." style="width: 100%; padding: 8px 12px; background: #1C1C19; border: 1px solid var(--admin-border); border-radius: 4px; font-size: 0.75rem;" oninput="searchInventory(this.value)">
+            </div>
+          </div>
+
+          <!-- Inventory Table -->
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th style="width: 60px;">Photo</th>
+                  <th>Jersey & Lot</th>
+                  <th>Status</th>
+                  <th>Prices</th>
+                  <th>Size Stock Controls</th>
+                  <th style="width: 110px;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="inventoryTableBody">
+                <!-- Injected dynamically by admin.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: Orders Desk & WhatsApp -->
+      <div class="tab-pane" id="tab-orders">
+        <div class="admin-card">
+          <div class="admin-card-head">
+            <div>
+              <h2>Orders Desk & WhatsApp Fulfillment</h2>
+              <p>Live register of customer orders placed through the website. Contact customers directly on WhatsApp to coordinate delivery and dispatch.</p>
+            </div>
+            <button class="admin-btn outline sm" onclick="loadOrdersDesk()">
+              Refresh Orders ↻
+            </button>
+          </div>
+
+          <div class="orders-grid" id="ordersListContainer">
+            <!-- Injected dynamically by admin.js -->
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: Store & Gateways Settings -->
+      <div class="tab-pane" id="tab-settings">
+        <div class="admin-card" style="max-width: 680px;">
+          <div class="admin-card-head">
+            <div>
+              <h2>Store Configuration & Gateways</h2>
+              <p>Configure default currency, payment gateway credentials, WhatsApp contact numbers, and security keys.</p>
+            </div>
+          </div>
+
+          <form onsubmit="handleSaveSettings(event)">
+            <div class="form-section">
+              <div class="form-section-title">01 / Regional Settings</div>
+              <div class="admin-form-row">
+                <div class="admin-form-group">
+                  <label for="setCurrency">Default Storefront Currency</label>
+                  <select id="setCurrency">
+                    <option value="INR">Indian Rupee (INR ₹)</option>
+                    <option value="TZS">Tanzanian Shilling (TZS TSh)</option>
+                  </select>
+                </div>
+                <div class="admin-form-group">
+                  <label for="setExchangeRate">INR to TZS Multiplier Rate</label>
+                  <input type="number" id="setExchangeRate" step="0.1" value="31.0">
+                </div>
+              </div>
+
+              <div class="admin-form-group">
+                <label for="setWhatsApp">Merchant WhatsApp Number (For Direct Orders)</label>
+                <input type="text" id="setWhatsApp" placeholder="+255 700 000 000">
+                <small style="font-size: 0.6875rem; color: var(--admin-muted); margin-top: 4px;">Include international country code without spaces (e.g. +2557... or +919...).</small>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <div class="form-section-title">02 / Payment Gateway Mode</div>
+              <div class="admin-form-group">
+                <label for="setPaymentMode">Gateway Processing Mode</label>
+                <select id="setPaymentMode">
+                  <option value="test">Test / Sandbox Mode (Manual & Verification Flow)</option>
+                  <option value="live">Live Merchant Gateway (Razorpay & Flutterwave)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-section" style="border-bottom: none;">
+              <div class="form-section-title">03 / Security & Admin Credentials</div>
+              <div class="admin-form-group">
+                <label for="setNewPassword">Change Control Room Password</label>
+                <input type="password" id="setNewPassword" placeholder="Enter new admin password (optional)">
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 12px; margin-top: 10px;">
+              <button class="admin-btn orange" type="submit">Save Store Settings ↗</button>
+              <button class="admin-btn danger outline" type="button" onclick="resetCatalogConfirm()">Reset Catalog to Defaults</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast" class="toast"></div>
+
+  <!-- Scripts -->
+  <script src="js/db.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
